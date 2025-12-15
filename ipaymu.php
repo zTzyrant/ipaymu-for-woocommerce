@@ -1,93 +1,76 @@
 <?php
+
 /*
-  Plugin Name: iPaymu Payment Gateway
-  Plugin URI: https://github.com/ipaymu/ipaymu-for-woocommerce
-  Description: iPaymu Indonesia Online Payment Gateway. Accept payments via Virtual Account, QRIS, Retail Outlets, Direct Debit, Credit Card, and COD.
-  Version: 2.0.1
+  Plugin Name: iPaymu - Payment Gateway
+  Plugin URI: https://github.com/ipaymu/iPaymu-wp-plugin
+  Description: iPaymu Indonesia Online Payment - Plug & Play, Within 30 seconds ready for LOCAL & INTERNASIONAL. Directly Connected 150 Payment Channels Reach more than 95% of consumers which provides the payment methods they use every day
+  Version: 2.0.4
   Author: iPaymu Development Team
   Author URI: https://ipaymu.com
-  License: GPLv2 or later
+  License: GPLv2
   License URI: https://www.gnu.org/licenses/gpl-2.0.html
-  Requires at least: 6.0
-  Tested up to: 6.9
-  Requires PHP: 7.4
   WC requires at least: 8.0.0
   WC tested up to: 8.6.0
-  Text Domain: ipaymu-for-woocommerce
-  Domain Path: /languages
-  Requires Plugins: woocommerce
+  Text Domain: ipaymu-payment-gateway
 */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+add_action('plugins_loaded', 'woocommerce_myplugin', 0);
+
+function woocommerce_myplugin()
+{
+    if (!class_exists('WC_Payment_Gateway'))
+        return; // if the WC payment gateway class 
+
+    include(plugin_dir_path(__FILE__) . 'gateway.php');
 }
 
-/**
- * Plugin constants.
- */
-define( 'IPAYMU_WCGW_VERSION', '2.0.1' );
-define( 'IPAYMU_WCGW_PLUGIN_FILE', __FILE__ );
-define( 'IPAYMU_WCGW_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'IPAYMU_WCGW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-/**
- * Load translation.
- */
-function ipaymu_wcgw_load_textdomain() {
-	load_plugin_textdomain(
-		'ipaymu-for-woocommerce',
-		false,
-		dirname( plugin_basename( __FILE__ ) ) . '/languages/'
-	);
+function add_ipaymu_gateway($methods)
+{
+    $methods[] = 'WC_Gateway_iPaymu';
+    return $methods;
 }
-add_action( 'plugins_loaded', 'ipaymu_wcgw_load_textdomain' );
+
+add_filter('woocommerce_payment_gateways', 'add_ipaymu_gateway');
 
 /**
- * Load the gateway class.
+ * Custom function to declare compatibility with cart_checkout_blocks feature 
  */
-function ipaymu_wcgw_load_gateway() {
-	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
-		return;
-	}
-	require_once IPAYMU_WCGW_PLUGIN_PATH . 'gateway.php';
+function declare_cart_checkout_blocks_compatibility()
+{
+    // Check if the required class exists
+    if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+        // Declare compatibility for 'cart_checkout_blocks'
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+    }
 }
-add_action( 'plugins_loaded', 'ipaymu_wcgw_load_gateway', 0 );
+// Hook the custom function to the 'before_woocommerce_init' action
+add_action('before_woocommerce_init', 'declare_cart_checkout_blocks_compatibility');
+
+// Hook the custom function to the 'woocommerce_blocks_loaded' action
+add_action('woocommerce_blocks_loaded', 'oawoo_register_order_approval_payment_method_type');
 
 /**
- * HPOS + Blocks compatibility.
+ * Custom function to register a payment method type
+
  */
-function ipaymu_wcgw_declare_compatibility() {
-	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
-			'cart_checkout_blocks',
-			IPAYMU_WCGW_PLUGIN_FILE,
-			true
-		);
+function oawoo_register_order_approval_payment_method_type()
+{
+    // Check if the required class exists
+    if (!class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
+        return;
+    }
 
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
-			'custom_order_tables',
-			IPAYMU_WCGW_PLUGIN_FILE,
-			true
-		);
-	}
+    // Include the custom Blocks Checkout class
+    require_once plugin_dir_path(__FILE__) . 'block.php';
+
+    // Hook the registration function to the 'woocommerce_blocks_payment_method_type_registration' action
+    add_action(
+        'woocommerce_blocks_payment_method_type_registration',
+        function (Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry) {
+            // Register an instance of My_Custom_Gateway_Blocks
+            $payment_method_registry->register(new Ipaymu_Blocks);
+        }
+    );
 }
-add_action( 'before_woocommerce_init', 'ipaymu_wcgw_declare_compatibility' );
-
-/**
- * Register Blocks integration.
- */
-function ipaymu_wcgw_register_blocks_support() {
-	if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
-		return;
-	}
-
-	require_once IPAYMU_WCGW_PLUGIN_PATH . 'block.php';
-
-	add_action(
-		'woocommerce_blocks_payment_method_type_registration',
-		function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-			$payment_method_registry->register( new Ipaymu_Blocks() );
-		}
-	);
-}
-add_action( 'woocommerce_blocks_loaded', 'ipaymu_wcgw_register_blocks_support' );

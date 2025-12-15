@@ -1,152 +1,68 @@
-![iPaymu Badge](ipaymu_badge.png)
+<p align="center"><img width="100" src="https://sandbox.ipaymu.com/asset/images/logo-ipaymu/ipaymu-text-plus-blue.png"></p>
 
-# iPaymu Payment Gateway for WooCommerce
+iPaymu&nbsp; Wordpress Payment Gateway Plugin
 
-**Contributors:** ipaymu  
-**License:** GPLv2 or later  
-**License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
-**Requires at least:** WordPress 6.0, PHP 7.4  
-**Tested up to:** WordPress 6.9, WooCommerce 8.6.0  
-**Stable tag:** 2.0.1
-**Requires Plugins**: woocommerce
+Contributors: iPaymu Development Team<br>
+Tags: iPaymu, payment gateway, payment processor, payment gateway indonesia, pembayaran virtual account, pembayaran qris, pembayaran indomaret, pembayaran alfamart, pembayaran kartu kredit.<br>
+Requires at least: 6.3<br>
+Tested up to: 8.6.1<br>
+Requires PHP: 7.4<br>
+Stable tag: 2.0.4<br>
+License: GPL v2 or later<br>
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-## Overview
+This is the official extension to receive payments using iPaymu Indonesia Payment Gateway.
 
-Official iPaymu Payment Gateway integration for WooCommerce. Accept payments via **Virtual Account (VA)**, **QRIS**, **Retail Outlets** (Alfamart/Indomaret), **Direct Debit**, **Credit Card**, and **COD** from your Indonesian customers.
+### Description
 
-## Description
+The iPaymu Payment Gateway extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of Indonesia most popular payment gateways.
 
-This plugin seamlessly integrates the iPaymu Indonesia payment system into WooCommerce, enabling your store to accept multiple payment methods popular in Indonesia:
+### Installation
 
-- **Virtual Account (VA)** - Bank transfer payments
-- **QRIS** - QR code-based payments
-- **Retail Payments** - Alfamart / Indomaret transfers
-- **Direct Debit** - Automatic payment deductions
-- **Credit Card** - Card payments
-- **Cash on Delivery (COD)** - Payment on delivery
+1. [Download](../../archive/master.zip) the plugin from this repository.
+2. Extract the plugin.
+3. Using an FTP program, or your hosting control panel, upload the unzipped plugin folder to your WordPress installation's `wp-content/plugins/` directory.
+4. Install & Activate the plugin from the Plugins menu within the WordPress admin panel.
+5. Go to menu **WooCommerce > Settings > Payment > iPaymu Payment Gateway  > Manage**, fill the configuration fields.
 
-**Requirement:** An active [iPaymu](https://ipaymu.com) account with API Key and Virtual Account number.
+### Why choose iPaymu Payment Gateway?
 
-## 🔐 External Services (Required)
+Easy integration, there are many payment options, such as QRIS, Virtual Account, Credit Card, Direct Debit, Retail Indomaret / Alfamart, and others.
 
-This plugin connects to iPaymu’s official API endpoints to process payments.
+### Frequently Asked Questions
 
-### **1. iPaymu Production API**
-- **Endpoint**: `https://my.ipaymu.com/api/v2/payment`  
-- **Used for**: Live payment creation and validation  
-- **Data Sent:**
-  - Order details (ID, amount, items)
-  - Customer name, email, phone
-  - Return URL & Notify URL
-  - Merchant identifiers (API Key, Virtual Account)
-- **Triggered:** When customer submits checkout  
-- **ToS:** https://ipaymu.com/syarat-dan-ketentuan/  
-- **Privacy:** https://ipaymu.com/kebijakan-privasi/
+#### Does this require a iPaymu account?
 
----
+Yes! A iPaymu account, API Key and VA are required for this gateway to function.
 
-### **2. iPaymu Sandbox API**
-- **Endpoint:** `https://sandbox.ipaymu.com/api/v2/payment`
-- **Used for:** Testing / simulation  
-- **Data Sent:** Same as production (non-financial, non-sensitive)  
-- **ToS & Privacy:** Same as above  
+#### Does this require an SSL certificate?
 
----
+An SSL certificate is recommended for additional safety and security for your customers.
 
-## 🔒 Data & Security Notes
-- No credit card or sensitive payment data is handled or stored by this plugin.
-- All API communication uses secure HTTPS.
-- Only essential transaction and customer fields are transmitted.
+#### Where can I find documentation?
 
----
+For help setting up and configuring, please refer to our [user guide](https://ipaymu.com/api-collection)
 
-## Installation
+#### Where can I get support or talk to other users?
 
-1. **Upload** the plugin folder to `/wp-content/plugins/`
-2. **Activate** via **Plugins → Installed Plugins**
-3. Navigate to **WooCommerce → Settings → Payments**
-4. Click on **iPaymu Payment Gateway** and configure:
-   - Enable/Disable the payment method
-   - Set test mode (Sandbox) or production
-   - Enter your VA and API Key
-   - Configure auto-redirect delay
-5. **Save changes**
-
-## Frequently Asked Questions
-
-### Do I need an iPaymu account?
-
-Yes. You must have an active iPaymu account with:
-- VA (Virtual Account) number
-- API Key (for integration)
-
-[Register for iPaymu](https://ipaymu.com) or [create an account](https://sandbox.ipaymu.com) for testing.
-
-### Does this support HPOS (High Performance Order Storage)?
-
-Yes! The plugin is fully compatible with WooCommerce's High Performance Order Storage feature.
-
-### Does this plugin support WooCommerce Blocks Checkout?
-
-Yes! The plugin includes full support for the WooCommerce Blocks checkout system.
-
-### Is SSL/TLS required?
-
-Yes, SSL/TLS is **recommended** (not optional) for secure payment processing and PCI compliance.
-
-## Changelog
-
-### Version 2.0.1
-
-- ✅ Add HPOS (High Performance Order Storage) compatibility
-- ✅ Add WooCommerce Blocks checkout support
-- ✅ Improve error handling and logging
-- ✅ Fix expired_time calculation
-- ✅ Align API request format with iPaymu API V2
-- ✅ Improve code quality and security
-
-## Configuration
-
-### Test Mode (Sandbox)
-
-To test payments:
-1. Enable **Mode Test/Sandbox** in settings
-2. Get test credentials from [iPaymu Sandbox](https://sandbox.ipaymu.com/integration)
-3. Enter your **Sandbox VA** and **API Key**
-
-### Production Mode
-
-When ready for live payments:
-1. Disable **Mode Test/Sandbox**
-2. Get live credentials from [iPaymu Production](https://my.ipaymu.com/integration)
-3. Enter your **Live VA** and **API Key**
-
-## Webhook Endpoint (for iPaymu Configuration)
-
-The plugin exposes a webhook endpoint for receiving payment notifications from iPaymu:
-
-```
-?wc-api=Ipaymu_WC_Gateway
-```
-
-**Full URL Example:**
-```
-https://example.com/?wc-api=Ipaymu_WC_Gateway
-```
-
-Configure this URL in your [iPaymu Dashboard](https://my.ipaymu.com) under **Integration Settings** → **Notification/Webhook URL**.
-
-### Backward Compatibility
-
-> **Note for upgrades:** Older plugin versions used `?wc-api=WC_Gateway_iPaymu`. The new endpoint is `?wc-api=Ipaymu_WC_Gateway`. Both endpoints remain supported for compatibility, but we recommend using the new one.
-
-## Support
-
-For issues or questions:
-- Visit [iPaymu Documentation](https://ipaymu.com/dokumentasi)
-- Contact [iPaymu Support](mailto:support@ipaymu.com)
-- Check the [GitHub Repository](https://github.com/ipaymu/ipaymu-for-woocommerce)
-
+If you get stuck, you can contact us via email to email to [support@ipaymu.com](mailto:support@ipaymu.com).
 ## License
 
-GPLv2 or later. See [LICENSE](LICENSE) for details.
+iPaymu&nbsp; Wordpress Payment Gateway Plugin is licensed under the GPL v3 or later.
+
+> This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
+
+> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+> You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+A copy of the license is included in the root of the plugin’s directory. The file is named `LICENSE`.
+
+## Important Notes
+
+### Licensing
+
+iPaymu&nbsp; Wordpress Payment Gateway Plugin is licensed under the GPL v2 or later; however, if you opt to use third-party code that is not compatible with v2, then you may need to switch to using code that is GPL v3 compatible.
+
+For reference, [here's a discussion](http://make.wordpress.org/themes/2013/03/04/licensing-note-apache-and-gpl/) that covers the Apache 2.0 License used by [Bootstrap](http://twitter.github.io/bootstrap/).
+
